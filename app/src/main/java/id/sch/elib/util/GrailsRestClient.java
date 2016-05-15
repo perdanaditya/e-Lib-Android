@@ -8,10 +8,14 @@ import javax.ws.rs.core.MultivaluedMap;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.config.ClientConfig;
+import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.core.header.FormDataContentDisposition;
+import com.sun.jersey.core.impl.provider.entity.StringProvider;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 import com.sun.jersey.multipart.FormDataBodyPart;
 import com.sun.jersey.multipart.FormDataMultiPart;
@@ -37,7 +41,7 @@ public class GrailsRestClient implements Serializable {
     public GrailsRestClient() {
         try {
 //            this.url = SessionUtil.getInitialParam("grailsEndPoint");
-            this.url="http://localhost:8090/BackendTest/";
+            this.url="http://10.0.2.2:8090/BackendTest/";
             this.restUrl = this.url + "rest/";
         } catch (Exception e) {
             e.printStackTrace();
@@ -66,18 +70,20 @@ public class GrailsRestClient implements Serializable {
         try {
             Client client = Client.create();
             WebResource webResource = client.resource(url + "api/logout");
-            ClientResponse response = webResource.type("application/json")
-                    .header("X-Auth-Token", token).post(ClientResponse.class);
+            ClientResponse response = webResource.type(MediaType.APPLICATION_JSON)
+//                    .header("X-Auth-Token", token)
+                    .post(ClientResponse.class);
 
 
             if (response.getStatus() != 200) {
-                handleError(response.getStatus());
+                output = handleError(response.getStatus());
                 throw new RuntimeException("Failed : HTTP error code : "
                         + response.getStatus());
+            }else{
+                output = response.getEntity(String.class);
             }
 
 
-            output = response.getEntity(String.class);
         } catch (Exception e) {
 //            FacesContext.getCurrentInstance().addMessage(
 //                    null,
@@ -102,14 +108,13 @@ public class GrailsRestClient implements Serializable {
                     .post(ClientResponse.class, input);
             System.out.println(response.getEntityTag());
             if (response.getStatus() != 200) {
-                handleError(response.getStatus());
-                output = response.getEntity(String.class);
+                output = handleError(response.getStatus());
+//                output = response.getEntity(String.class);
 //                output = "failed";
 //                output=response.getStatus()+"";
 
             } else {
                 output = response.getEntity(String.class);
-//                  output="asdasdasd";
             }
         } catch (Exception e) {
             System.out.println("LOGIN-ERROR: " + e.getMessage());
@@ -147,7 +152,7 @@ public class GrailsRestClient implements Serializable {
 //                = FacesContext.getCurrentInstance().getExternalContext();
 //        Map<String, Object> sessionMap = externalContext.getSessionMap();
 //        return sessionMap.get("username").toString(); //use this when security enabled
-        return null;
+        return DataLibrary.getInstance().getUser().getUsername();
     }
 
     /**
@@ -161,18 +166,20 @@ public class GrailsRestClient implements Serializable {
         try {
             Client client = Client.create();
             WebResource webResource = client.resource(this.url + path);
-            ClientResponse response = webResource.accept("application/json")
+            ClientResponse response = webResource.accept(MediaType.APPLICATION_JSON)
 //                    .header("X-Auth-Token", this.getToken())
 //                    .header("username", this.getUsername())
                     .get(ClientResponse.class);
 
             if (response.getStatus() != 200) {
-                handleError(response.getStatus());
-                throw new RuntimeException("Failed : HTTP error code : "
+                output = handleError(response.getStatus());
+                DataLibrary.getInstance().setMessage(output);
+                System.out.println("Failed : HTTP error code : "
                         + response.getStatus());
+            }else{
+                output = response.getEntity(String.class);
             }
 
-            output = response.getEntity(String.class);
         } catch (Exception e) {
             System.out.println("GET-ERROR: " + e.getMessage());
             e.printStackTrace();
@@ -189,24 +196,28 @@ public class GrailsRestClient implements Serializable {
     public String add(String path, Object post)
             throws RuntimeException {
         String output = "";
-        try {
-            Client client = Client.create();
+        try {ClientConfig cc = new DefaultClientConfig();
+            cc.getClasses().add(StringProvider.class);
+            Client client = Client.create(cc);
             WebResource webResource = client.resource(this.url + path);
             Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss.S")
                     .create();
             String input = gson.toJson(post);
 //            System.out.println("===INPUT=====");
 //            System.out.println(input);
-            ClientResponse response = webResource.type("application/json")
+            ClientResponse response = webResource.type(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
                     .post(ClientResponse.class, input);
 
             if (response.getStatus() != 200) {
-                handleError(response.getStatus());
-                throw new RuntimeException("Failed : HTTP error code : "
+                output = handleError(response.getStatus());
+                DataLibrary.getInstance().setMessage(output);
+                System.out.println("Failed : HTTP error code : "
                         + response.getStatus() + "\n"
                         + response.getEntity(String.class));
+            }else{
+                output = response.getEntity(String.class);
             }
-            output = response.getEntity(String.class);
         } catch (RuntimeException e) {
             System.out.println("ADD-ERROR-RUNTIME: "+e.getMessage());
             e.printStackTrace();
@@ -235,17 +246,19 @@ public class GrailsRestClient implements Serializable {
             String input = gson.toJson(post);
 //            System.out.println("===UPDATE=====");
 //            System.out.println(input);
-            ClientResponse response = webResource.type("application/json")
+            ClientResponse response = webResource.type(MediaType.APPLICATION_JSON)
 //                    .header("X-Auth-Token", this.getToken())
 //                    .header("username", this.getUsername())
                     .put(ClientResponse.class, input);
 
             if (response.getStatus() != 200) {
-                handleError(response.getStatus());
-                throw new RuntimeException("Failed : HTTP error code : "
+                output = handleError(response.getStatus());
+                DataLibrary.getInstance().setMessage(output);
+                System.out.println("Failed : HTTP error code : "
                         + response.getStatus());
+            }else{
+                output = response.getEntity(String.class);
             }
-            output = response.getEntity(String.class);
         } catch (Exception e) {
             System.out.println("PUT-ERROR: "+e.getMessage());
             e.printStackTrace();
@@ -265,16 +278,18 @@ public class GrailsRestClient implements Serializable {
         Client client = Client.create();
         WebResource webResource = client.resource(path);
         try {
-            ClientResponse response = webResource.accept("application/json")
-                    .header("X-Auth-Token", this.getToken())
-                    .header("username", this.getUsername())
+            ClientResponse response = webResource.accept(MediaType.APPLICATION_JSON)
+//                    .header("X-Auth-Token", this.getToken())
+//                    .header("username", this.getUsername())
                     .delete(ClientResponse.class);
             if (response.getStatus() != 200) {
-                handleError(response.getStatus());
-                throw new RuntimeException("Failed : HTTP error code : "
+                output = handleError(response.getStatus());
+                DataLibrary.getInstance().setMessage(output);
+                System.out.println("Failed : HTTP error code : "
                         + response.getStatus());
+            }else{
+                output = response.getEntity(String.class);
             }
-            output = response.getEntity(String.class);
         } catch (Exception e) {
             System.out.println("DETELE_DIRECT-ERROR: "+e.getMessage());
             e.printStackTrace();
@@ -287,11 +302,8 @@ public class GrailsRestClient implements Serializable {
      *
      * @param status
      */
-    private void handleError(Integer status) {
+    public String handleError(Integer status) {
         String summary = null, detail = null;
-//        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
-//                summary, detail);
-
 
         if (status == 400) {
             summary = "Gagal memuat/menyimpan data. Hal ini terjadi karena kesalahan aplikasi dalam mengirimkan data request ke server, silakan hubungi administrator.";
@@ -306,80 +318,6 @@ public class GrailsRestClient implements Serializable {
         } else {
             summary = "Gagal memuat/menyimpan data.";
         }
-//        message.setSummary(summary);
-//        FacesContext.getCurrentInstance().addMessage(null, message);
-    }
-
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    public String upload(String uploadPath, InputStream is, String filename) {
-        String sContentDisposition = String.format(
-                "attachment;id=1; filename=\"%s\"", filename);
-        String output = "";
-        Client client = Client.create();
-
-        WebResource webResource = client.resource(url + uploadPath);
-        MultivaluedMap formData = new MultivaluedMapImpl();
-
-        formData.add("id", "1");
-        formData.add("filename", filename);
-        formData.add("file", is);
-
-        ClientResponse response = webResource
-                .type(MediaType.APPLICATION_OCTET_STREAM)
-                .header("Content-Disposition", sContentDisposition)
-                .header("X-Auth-Token", this.getToken())
-                .post(ClientResponse.class, formData);
-
-        output = response.getEntity(String.class);
-        return output;
-    }
-
-    public InputStream download(String path) {
-        try {
-//            LoggingUtil.INFO("Masuk download Dengan Path " + path);
-            Client client = Client.create();
-            WebResource webResource = client.resource(url + path);
-            ClientResponse response = webResource
-                    .header("X-Auth-Token", this.getToken())
-                    .get(ClientResponse.class);
-            if (response.getStatus() != 200) {
-                throw new RuntimeException("Failed : HTTP error code : "
-                        + response.getStatus());
-            }
-            if (response.getEntityInputStream() == null) {
-//                LoggingUtil.INFO("Download untuk " + path + " menghasil kan null");
-            }
-            return response.getEntityInputStream();
-        } catch (RuntimeException e) {
-            System.out.println("DOWNLOAD-ERROR: "+e.getMessage());
-        }
-        return null;
-    }
-
-    public String upload(String uploadPath,
-                         InputStream is,
-                         String filename,
-                         String content_type) {
-        Client client = Client.create();
-        WebResource webResource = client.resource(url + uploadPath);
-        FormDataMultiPart fdmp = new FormDataMultiPart();
-        FormDataBodyPart fdbp;
-        try {
-            fdbp = new FormDataBodyPart(
-                    FormDataContentDisposition.name("file").fileName(URLEncoder.encode((filename), "UTF-8")).build(),
-                    is,
-                    MediaType.valueOf(content_type)
-            );
-            fdmp.bodyPart(fdbp);
-        } catch (UnsupportedEncodingException ex) {
-            Logger.getLogger(GrailsRestClient.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        ClientResponse response = webResource.accept("application/json")
-                .type(MediaType.MULTIPART_FORM_DATA)
-                .header("X-Auth-Token", this.getToken())
-                .post(ClientResponse.class, fdmp);
-
-        return response.getEntity(String.class);
+        return summary;
     }
 }

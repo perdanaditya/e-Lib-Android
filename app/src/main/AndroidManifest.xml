@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -23,12 +24,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Pinjaman"
-            android:label="@string/title_activity_pinjaman"
+            android:name=".PeminjamanActivity"
+            android:label="@string/title_activity_peminjaman"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".DetailBuku"
-            android:label="@string/title_activity_detail_buku"
+            android:name=".DetailActivity"
+            android:label="@string/title_activity_detail"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

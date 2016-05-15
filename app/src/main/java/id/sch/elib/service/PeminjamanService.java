@@ -2,11 +2,16 @@ package id.sch.elib.service;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
+
 import id.sch.elib.model.Peminjaman;
+import id.sch.elib.model.User;
 import id.sch.elib.util.BaseServiceInterface;
+import id.sch.elib.util.DataLibrary;
 import id.sch.elib.util.GrailsRestClient;
 import id.sch.elib.util.Message;
+
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +52,7 @@ public class PeminjamanService implements BaseServiceInterface {
     public Object update(Object obj) {
         Peminjaman cast = (Peminjaman) obj;
         Message jo = gson.fromJson(grc.put(endpoint + "/" + cast.getId(), cast), Message.class);
-        return  jo;
+        return jo;
     }
 
     @Override
@@ -63,5 +68,16 @@ public class PeminjamanService implements BaseServiceInterface {
         }.getType();
         ArrayList<Peminjaman> list = gson.fromJson(response, type);
         return list;
+    }
+
+    public Object fetchPeminjmanByUserId() {
+        Peminjaman jo = new Peminjaman();
+        try {
+            long id = DataLibrary.getInstance().getUser().getId();
+            jo = gson.fromJson(grc.get(endpoint + "/fetchPeminjamanByUser?id=" + id), Peminjaman.class);
+        } catch (Exception e) {
+            System.out.println("fetchPeminjmanByUserId ERROR: "+e.getMessage());
+        }
+        return jo;
     }
 }

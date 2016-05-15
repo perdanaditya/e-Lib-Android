@@ -7,7 +7,7 @@ public interface BaseControllerInterface {
 
     public Object search(Object completeList, String param, String column);
 
-    public Object fetchData(Object target, boolean init);
+    public Object fetchData();
 
     /**
      * Action when user save the SAA

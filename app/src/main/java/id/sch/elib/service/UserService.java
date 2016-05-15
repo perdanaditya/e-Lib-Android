@@ -2,11 +2,15 @@ package id.sch.elib.service;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
+
 import id.sch.elib.model.User;
 import id.sch.elib.util.BaseServiceInterface;
+import id.sch.elib.util.DataLibrary;
 import id.sch.elib.util.GrailsRestClient;
 import id.sch.elib.util.Message;
+
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,7 +80,17 @@ public class UserService implements BaseServiceInterface {
 
     public Object login(Object obj) {
         String response = grc.add(endpoint + "/login", obj);
-        Message jo = gson.fromJson(response, Message.class);
-        return jo;
+        User jo = new User();
+        try {
+            jo = gson.fromJson(response, User.class);
+            return jo;
+        } catch (IllegalStateException ie) {
+            DataLibrary.getInstance().setMessage(response);
+        } catch (JsonSyntaxException je) {
+            DataLibrary.getInstance().setMessage(response);
+        } catch (Exception e) {
+            DataLibrary.getInstance().setMessage(response);
+        }
+        return null;
     }
 }

@@ -10,6 +10,15 @@ dependencies {
     compile 'com.googlecode.json-simple:json-simple:1.1'
     compile 'com.sun.jersey.contribs:jersey-multipart:1.8'
     compile 'com.sun.jersey.contribs:jersey-apache-client:1.17'
+//    compile 'com.sun.jersey:jersey-client:1.9.1'
+//    compile 'com.sun.jersey:jersey-core:1.19'
+// http://mvnrepository.com/artifact/org.glassfish.jersey.core/jersey-client
+    compile group: 'org.glassfish.jersey.core', name: 'jersey-client', version: '2.5.1'
+
+    // http://mvnrepository.com/artifact/com.sun.jersey/jersey-json
+//    compile group: 'com.sun.jersey', name: 'jersey-json', version: '1.12'
+
+//    compile 'org.apache.httpcomponents:httpclient:4.3.6'
 }
 
 android {
@@ -40,10 +49,11 @@ android {
         exclude 'META-INF/license.txt'
         exclude 'META-INF/dependencies.txt'
         exclude 'META-INF/LGPL2.1'
-        exclude 'META-INF/services/javax.ws.rs.ext.MessageBodyReader'
-        exclude 'META-INF/services/javax.ws.rs.ext.MessageBodyWriter'
-        exclude 'META-INF/jersey-module-version'
+        pickFirst 'META-INF/services/javax.ws.rs.ext.MessageBodyWriter'
+        pickFirst 'META-INF/services/javax.ws.rs.ext.MessageBodyReader'
+//        exclude 'META-INF/services/javax.ws.rs.ext.MessageBodyWriter'
+        pickFirst 'META-INF/jersey-module-version'
         exclude 'META-INF/ASL2.0'
-        exclude 'META-INF/services/com.sun.jersey.spi.inject.InjectableProvider'
+        pickFirst 'META-INF/services/com.sun.jersey.spi.inject.InjectableProvider'
     }
 }

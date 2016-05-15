@@ -15,4 +15,13 @@
     </string>
     <string name="title_activity_pinjaman">List Peminjaman Buku</string>
     <string name="title_activity_detail_buku">Detail Buku</string>
+    <string name="title_activity_navigaton">Menu</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_peminjaman">Peminjaman</string>
+    <string name="title_activity_navigation">Menu</string>
+    <string name="title_activity_detail">Detail Buku</string>
 </resources>

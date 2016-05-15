@@ -11,6 +11,7 @@ public class User implements Serializable {
     private long id;
     private String username;
     private String password;
+    private UserRole userRole;
     private String email;
     private Pengguna pengguna;
     private Boolean active;
@@ -39,6 +40,14 @@ public class User implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public UserRole getUserRole() {
+        return userRole;
+    }
+
+    public void setUserRole(UserRole userRole) {
+        this.userRole = userRole;
     }
 
     public String getEmail() {
