@@ -80,12 +80,12 @@ public class PeminjamanActivity extends AppCompatActivity implements AdapterView
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Log.i("HelloListView", "You clicked Item: " + id + " at position:" + position);
+//        Log.i("HelloListView", "You clicked Item: " + id + " at position:" + position);
         // Then you start a new Activity via Intent
         Intent intent = new Intent();
         intent.setClass(this, DetailActivity.class);
         intent.putExtra("position", position);
-        // Or / And
+
         intent.putExtra("id", id);
         PeminjamanActivity.this.finish();
         startActivity(intent);

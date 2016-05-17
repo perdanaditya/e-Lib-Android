@@ -34,11 +34,20 @@ public class DetailActivity extends AppCompatActivity{
         Intent intent = getIntent();
         int position = intent.getIntExtra("position", 0);
 
-        // Here we turn your string.xml in an array
+        // Here we turn string.xml in an array
         ArrayList<DetailPeminjaman> myKeys = DataLibrary.getPeminjaman().getDetailPeminjaman();
 
-        TextView myTextView = (TextView) findViewById(R.id.textView);
-        myTextView.setText(myKeys.get(position).getBuku().getJudul());
+        TextView judulTv = (TextView) findViewById(R.id.textView);
+        TextView isbnTv = (TextView) findViewById(R.id.isbn);
+        TextView penerbitTv = (TextView) findViewById(R.id.penerbit);
+        TextView tahunTerbitTv = (TextView) findViewById(R.id.tahun);
+        TextView kategoriTv = (TextView) findViewById(R.id.kategori);
+
+        judulTv.setText(myKeys.get(position).getBuku().getJudul());
+        isbnTv.setText(myKeys.get(position).getBuku().getIsbn());
+        penerbitTv.setText(myKeys.get(position).getBuku().getPenerbit().getNamaPenerbit());
+        tahunTerbitTv.setText(myKeys.get(position).getBuku().getTahunTerbit());
+        kategoriTv.setText(myKeys.get(position).getBuku().getRakBuku().getNamaJenis());
 //        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 //        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
 //                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -51,7 +60,7 @@ public class DetailActivity extends AppCompatActivity{
 
     @Override
     public void onBackPressed() {
-        System.out.println("ON BACK PRESSED");
+//        System.out.println("ON BACK PRESSED");
         Intent i = new Intent(DetailActivity.this, PeminjamanActivity.class);
         DetailActivity.this.startActivity(i);
         DetailActivity.this.finish();
